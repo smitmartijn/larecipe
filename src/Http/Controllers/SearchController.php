@@ -30,30 +30,26 @@ class SearchController extends Controller
     }
 
     /**
-     * Get the index of a given version.
+     * Get the index
      *
-     * @param $version
      * @return \Illuminate\Http\JsonResponse
      */
-    public function __invoke($version)
+    public function __invoke()
     {
-        $this->authorizeAccessSearch($version);
-        
+        $this->authorizeAccessSearch();
+
         return response()->json(
-            $this->documentationRepository->search($version)
+            $this->documentationRepository->search()
         );
     }
 
     /**
-     * @param $version
      */
-    protected function authorizeAccessSearch($version)
+    protected function authorizeAccessSearch()
     {
         abort_if(
-            $this->documentationRepository->isNotPublishedVersion($version)
-            ||
             config('larecipe.search.default') != 'internal'
-            || 
+            ||
             ! config('larecipe.search.enabled')
         , 403);
     }

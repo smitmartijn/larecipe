@@ -35,7 +35,7 @@ class DocumentationController extends Controller
     }
 
     /**
-     * Redirect the index page of docs to the default version.
+     * Redirect the index page of docs
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -44,7 +44,6 @@ class DocumentationController extends Controller
         return redirect()->route(
             'larecipe.show',
             [
-                'version' => config('larecipe.versions.default'),
                 'page' => config('larecipe.docs.landing')
             ]
         );
@@ -53,35 +52,22 @@ class DocumentationController extends Controller
     /**
      * Show a documentation page.
      *
-     * @param $version
      * @param null $page
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Routing\Redirector
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function show($version, $page = null)
+    public function show($page = null)
     {
-        $documentation = $this->documentationRepository->get($version, $page);
-        
+        $documentation = $this->documentationRepository->get($page);
+
         if (Gate::has('viewLarecipe')) {
             $this->authorize('viewLarecipe', $documentation);
-        }
-
-        if ($this->documentationRepository->isNotPublishedVersion($version)) {
-            return redirect()->route(
-                'larecipe.show',
-                [
-                    'version' => config('larecipe.versions.default'),
-                    'page' => config('larecipe.docs.landing')
-                ]
-            );
         }
 
         return response()->view('larecipe::docs', [
             'title'          => $documentation->title,
             'index'          => $documentation->index,
             'content'        => $documentation->content,
-            'currentVersion' => $version,
-            'versions'       => $documentation->publishedVersions,
             'currentSection' => $documentation->currentSection,
             'canonical'      => $documentation->canonical,
         ], $documentation->statusCode);

@@ -28,24 +28,20 @@ class DocumentationRepository
         $this->documentation = $documentation;
 
         $this->docsRoute = route('larecipe.index');
-        $this->defaultVersion = config('larecipe.versions.default');
-        $this->publishedVersions = config('larecipe.versions.published');
-        $this->defaultVersionUrl = route('larecipe.show', ['version' => $this->defaultVersion]);
+        $this->defaultVersionUrl = route('larecipe.show');
     }
 
     /**
-     * @param $version
      * @param null $page
      * @param array $data
      * @return $this|DocumentationRepository
      */
-    public function get($version, $page = null, $data = [])
+    public function get($page = null, $data = [])
     {
-        $this->version = $version;
         $this->sectionPage = $page ?: config('larecipe.docs.landing');
-        $this->index = $this->documentation->getIndex($version);
+        $this->index = $this->documentation->getIndex();
 
-        $this->content = $this->documentation->get($version, $this->sectionPage, $data);
+        $this->content = $this->documentation->get($this->sectionPage, $data);
 
         if (is_null($this->content)) {
             return $this->prepareNotFound();
@@ -53,7 +49,7 @@ class DocumentationRepository
 
         $this->prepareTitle()
             ->prepareCanonical()
-            ->prepareSection($version, $page);
+            ->prepareSection($page);
 
         return $this;
     }
@@ -90,13 +86,12 @@ class DocumentationRepository
     /**
      * Prepare the current section page.
      *
-     * @param $version
      * @param $page
      * @return $this
      */
-    protected function prepareSection($version, $page)
+    protected function prepareSection($page)
     {
-        if ($this->documentation->sectionExists($version, $page)) {
+        if ($this->documentation->sectionExists($page)) {
             $this->currentSection = $page;
         }
 
@@ -110,9 +105,8 @@ class DocumentationRepository
      */
     protected function prepareCanonical()
     {
-        if ($this->documentation->sectionExists($this->defaultVersion, $this->sectionPage)) {
+        if ($this->documentation->sectionExists($this->sectionPage)) {
             $this->canonical = route('larecipe.show', [
-                'version' => $this->defaultVersion,
                 'page' => $this->sectionPage
             ]);
         }
@@ -121,35 +115,12 @@ class DocumentationRepository
     }
 
     /**
-     * Check if the given version is in the published versions.
-     *
-     * @param $version
-     * @return bool
-     */
-    public function isPublishedVersion($version)
-    {
-        return in_array($version, $this->publishedVersions);
-    }
-
-    /**
-     * Check if the given version is not in the published versions.
-     *
-     * @param $version
-     * @return bool
-     */
-    public function isNotPublishedVersion($version)
-    {
-        return ! $this->isPublishedVersion($version);
-    }
-
-    /**
-     * @param $version
      *
      * @return $this
      */
-    public function search($version)
+    public function search()
     {
-        return $this->documentation->index($version);
+        return $this->documentation->index();
     }
 
     /**

@@ -22,25 +22,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Documentation Versions
-    |--------------------------------------------------------------------------
-    |
-    | Here you may specify and set the versions and the default (latest) one
-    | of your documentation's versions where you can redirect the user to.
-    | Just make sure that the default version is in the published list.
-    |
-    |
-    */
-
-    'versions'      => [
-        'default'   => '1.0',
-        'published' => [
-            '1.0'
-        ]
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
     | Documentation Settings
     |--------------------------------------------------------------------------
     |

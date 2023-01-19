@@ -7,28 +7,22 @@ use Symfony\Component\DomCrawler\Crawler;
 trait Indexable
 {
     /**
-     * @param  $version
      * @return mixed
      */
-    public function index($version)
+    public function index()
     {
-        return $this->cache->remember(function () use ($version) {
-            $pages = $this->getPages($version);
+        return $this->cache->remember(function () {
+            $pages = $this->getPages();
 
             $result = [];
             foreach($pages as $page) {
-                $split = explode("{{version}}", $page);
-                if (count($split) <= 1)
-                    continue;
-
-                $page = $split[1];
-                $pageContent = $this->get($version, $page);
+                $pageContent = $this->get($page);
 
                 if(! $pageContent)
                     continue;
 
                 $indexableNodes = implode(',', config('larecipe.search.engines.internal.index'));
-                
+
                 $nodes = (new Crawler($pageContent))
                         ->filter($indexableNodes)
                         ->each(function (Crawler $node, $i) {
@@ -40,7 +34,7 @@ trait Indexable
                         ->each(function (Crawler $node, $i) {
                             return $node->text();
                         });
-                
+
                 $result[] = [
                     'path'     => $page,
                     'title'    => $title ? $title[0] : '',
@@ -49,16 +43,15 @@ trait Indexable
             }
 
             return $result;
-        }, 'larecipe.docs.'.$version.'.search');
+        }, 'larecipe.docs.search');
     }
 
     /**
-     * @param  $version
      * @return mixed
      */
-    protected function getPages($version)
+    protected function getPages()
     {
-        $path = base_path(config('larecipe.docs.path').'/'.$version.'/index.md');
+        $path = base_path(config('larecipe.docs.path').'/index.md');
 
         // match all markdown urls => [title](url)
         preg_match_all('/\[.+\]\((.+)\)/', $this->files->get($path), $matches);

@@ -8,7 +8,7 @@
     <div class="internal-autocomplete-result">
       <ul v-if="filteredPages.length">
         <li v-for="page in filteredPages" :key="page.path">
-          <a :href="versionUrl + page.path">
+          <a :href="page.path">
             <span class="page-title">
               <b>{{ page.title }}</b>
             </span>
@@ -54,7 +54,7 @@
 <script>
 export default {
   name: "internal-search-box",
-  props: ["versionUrl", "searchUrl"],
+  props: ["searchUrl"],
   data() {
     return {
       search: "",
@@ -70,7 +70,7 @@ export default {
       }
     },
     navigateToHeading(page, heading) {
-      window.location =  this.versionUrl + page.path + "#" + this.slugify(heading);
+      window.location = page.path + "#" + this.slugify(heading);
     },
     slugify(heading) {
       return heading

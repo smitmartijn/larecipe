@@ -10,7 +10,6 @@ use BinaryTorch\LaRecipe\Commands\InstallCommand;
 use BinaryTorch\LaRecipe\Contracts\MarkdownParser;
 use BinaryTorch\LaRecipe\Services\ParseDownMarkdownParser;
 use BinaryTorch\LaRecipe\Facades\LaRecipe as LaRecipeFacade;
-use BinaryTorch\LaRecipe\Commands\GenerateDocumentationCommand;
 
 class LaRecipeServiceProvider extends ServiceProvider
 {
@@ -97,7 +96,6 @@ class LaRecipeServiceProvider extends ServiceProvider
         $this->commands(AssetCommand::class);
         $this->commands(ThemeCommand::class);
         $this->commands(InstallCommand::class);
-        $this->commands(GenerateDocumentationCommand::class);
     }
 
     /**
